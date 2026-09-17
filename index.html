@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kandidátky pro volby do zastupitelstev obcí 2026</title>
+    <style>
+        :root {
+            --primary-blue: #0033cc;
+            --border-color: #d1d5db;
+            --text-main: #111827;
+            --text-muted: #6b7280;
+            --bg-light: #f3f4f6;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text-main);
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: #0f172a;
+        }
+
+        /* Navigace / Taby */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+        .tab {
+            padding: 10px 20px;
+            font-weight: 600;
+            color: var(--primary-blue);
+            border-bottom: 3px solid var(--primary-blue);
+            cursor: pointer;
+        }
+        .tab.inactive {
+            color: var(--text-main);
+            border-bottom: 3px solid transparent;
+        }
+
+        /* Formulářové prvky */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            background-color: white;
+            color: var(--text-muted);
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230033cc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+        }
+        select:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            color: var(--text-main);
+        }
+        select:disabled {
+            background-color: var(--bg-light);
+            cursor: not-allowed;
+        }
+
+        /* Akordeon pro strany */
+        .party-accordion {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        .party-header {
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            transition: background 0.2s;
+        }
+        .party-header:hover {
+            background: #f9fafb;
+        }
+        .party-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+        .party-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        .chevron {
+            transition: transform 0.3s;
+            color: var(--primary-blue);
+        }
+        .party-accordion.active .chevron {
+            transform: rotate(180deg);
+        }
+        .party-content {
+            display: none;
+            padding: 0 20px;
+            border-top: 1px solid var(--border-color);
+        }
+        .party-accordion.active .party-content {
+            display: block;
+        }
+
+        /* Seznam kandidátů */
+        .candidate-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #f3f4f6;
+        }
+        .candidate-item:last-child {
+            border-bottom: none;
+        }
+        .candidate-name {
+            font-weight: 600;
+            font-size: 1.05rem;
+            margin-bottom: 5px;
+        }
+        .candidate-details {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+        .candidate-details b {
+            color: var(--text-main);
+        }
+
+        #loading {
+            display: none;
+            color: var(--primary-blue);
+            font-weight: bold;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Kandidátky pro volby do zastupitelstev obcí 2026</h1>
+
+    <div class="tabs">
+        <div class="tab">Kandidáti v obcích</div>
+        <div class="tab inactive">Hledat kandidáta</div>
+    </div>
+
+    <div class="form-group">
+        <label for="kraj">Kraj</label>
+        <select id="kraj">
+            <option value="">Vyberte kraj</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="okres">Okres</label>
+        <select id="okres" disabled>
+            <option value="">Vyberte okres</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="obec">Obec nebo městská část</label>
+        <select id="obec" disabled>
+            <option value="">Vyberte obec</option>
+        </select>
+    </div>
+
+    <div id="loading">Načítám data...</div>
+    <div id="vysledky"></div>
+
+    <script>
+        let lokalityData = {};
+
+        const selKraj = document.getElementById('kraj');
+        const selOkres = document.getElementById('okres');
+        const selObec = document.getElementById('obec');
+        const vysledkyDiv = document.getElementById('vysledky');
+        const loadingDiv = document.getElementById('loading');
+
+        // 1. Načtení navigačního stromu při startu
+        fetch('lokality.json')
+            .then(res => res.json())
+            .then(data => {
+                lokalityData = data;
+                // Naplnění výběru krajů
+                Object.keys(data).sort().forEach(kraj => {
+                    let opt = document.createElement('option');
+                    opt.value = kraj;
+                    opt.textContent = kraj;
+                    selKraj.appendChild(opt);
+                });
+            })
+            .catch(err => console.error("Chyba při načítání lokalit: ", err));
+
+        // 2. Obsluha výběru kraje
+        selKraj.addEventListener('change', function() {
+            const kraj = this.value;
+            
+            // Reset nižších úrovní
+            selOkres.innerHTML = '<option value="">Vyberte okres</option>';
+            selObec.innerHTML = '<option value="">Vyberte obec</option>';
+            selOkres.disabled = true;
+            selObec.disabled = true;
+            vysledkyDiv.innerHTML = '';
+
+            if (kraj && lokalityData[kraj]) {
+                selOkres.disabled = false;
+                Object.keys(lokalityData[kraj]).sort().forEach(okres => {
+                    let opt = document.createElement('option');
+                    opt.value = okres;
+                    opt.textContent = okres;
+                    selOkres.appendChild(opt);
+                });
+            }
+        });
+
+        // 3. Obsluha výběru okresu
+        selOkres.addEventListener('change', function() {
+            const kraj = selKraj.value;
+            const okres = this.value;
+
+            selObec.innerHTML = '<option value="">Vyberte obec</option>';
+            selObec.disabled = true;
+            vysledkyDiv.innerHTML = '';
+
+            if (kraj && okres && lokalityData[kraj][okres]) {
+                selObec.disabled = false;
+                lokalityData[kraj][okres].forEach(obec => {
+                    let opt = document.createElement('option');
+                    opt.value = obec.id;
+                    opt.textContent = obec.nazev;
+                    selObec.appendChild(opt);
+                });
+            }
+        });
+
+        // 4. Obsluha výběru obce (Stažení JSONu pro konkrétní obec)
+        selObec.addEventListener('change', function() {
+            const kodObce = this.value;
+            vysledkyDiv.innerHTML = '';
+
+            if (kodObce) {
+                loadingDiv.style.display = 'block';
+
+                fetch(`data_obci/${kodObce}.json`)
+                    .then(res => {
+                        if (!res.ok) throw new Error("Data pro tuto obec se nepodařilo načíst.");
+                        return res.json();
+                    })
+                    .then(data => vykresliVysledky(data))
+                    .catch(err => {
+                        vysledkyDiv.innerHTML = `<p style="color:red">${err.message}</p>`;
+                    })
+                    .finally(() => {
+                        loadingDiv.style.display = 'none';
+                    });
+            }
+        });
+
+        // 5. Vykreslení seznamu stran a kandidátů
+        function vykresliVysledky(data) {
+            let html = '';
+
+            if (data.strany.length === 0) {
+                html = '<p>Pro tuto obec nejsou evidovány žádné kandidátní listiny.</p>';
+                vysledkyDiv.innerHTML = html;
+                return;
+            }
+
+            data.strany.forEach(strana => {
+                // Sestavení kandidátů
+                let kandidatiHtml = '';
+                strana.kandidati.forEach(k => {
+                    kandidatiHtml += `
+                        <div class="candidate-item">
+                            <div class="candidate-name">${k.poradi}. ${k.jmeno}</div>
+                            <div class="candidate-details">
+                                ${k.vek} let, ${k.povolani}, ${k.bydliste}, politická příslušnost: <b>${k.pol_prisl}</b>, navrhující subjekt: <b>${k.navrh_subj}</b>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                // HTML pro jednu stranu (Akordeon)
+                html += `
+                    <div class="party-accordion">
+                        <div class="party-header" onclick="this.parentElement.classList.toggle('active')">
+                            <div>
+                                <div class="party-title">${strana.zkratka}</div>
+                                <div class="party-subtitle">${strana.nazev}</div>
+                            </div>
+                            <div class="chevron">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                            </div>
+                        </div>
+                        <div class="party-content">
+                            ${kandidatiHtml || '<p style="padding: 15px 0;">Nejsou evidováni žádní kandidáti.</p>'}
+                        </div>
+                    </div>
+                `;
+            });
+
+            vysledkyDiv.innerHTML = html;
+        }
+    </script>
+</body>
+</html>
