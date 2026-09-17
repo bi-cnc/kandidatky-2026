@@ -1,206 +1,278 @@
-<!DOCTYPE html>
-<html lang="cs">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kandidátky pro volby do zastupitelstev obcí 2026</title>
-    <style>
-        :root {
-            --primary-blue: #0033cc;
-            --border-color: #d1d5db;
-            --text-main: #111827;
-            --text-muted: #6b7280;
-            --bg-light: #f3f4f6;
-        }
+<style>
+    /* Obalíme aplikaci do specifického ID, aby se styly netloukly se zbytkem vašeho webu */
+    #kandidatky-app-2026 {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        color: #111827;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px 0;
+        line-height: 1.5;
+    }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            color: var(--text-main);
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            line-height: 1.5;
-        }
+    #kandidatky-app-2026 h2 {
+        font-size: 1.8rem;
+        margin-bottom: 20px;
+        color: #0f172a;
+    }
 
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 20px;
-            color: #0f172a;
-        }
+    /* Navigace / Taby */
+    #kandidatky-app-2026 .tabs {
+        display: flex;
+        border-bottom: 1px solid #d1d5db;
+        margin-bottom: 30px;
+    }
+    #kandidatky-app-2026 .tab {
+        padding: 10px 20px;
+        font-weight: 600;
+        color: #0033cc;
+        border-bottom: 3px solid #0033cc;
+        cursor: pointer;
+    }
+    #kandidatky-app-2026 .tab.inactive {
+        color: #111827;
+        border-bottom: 3px solid transparent;
+    }
 
-        /* Navigace / Taby */
-        .tabs {
-            display: flex;
-            border-bottom: 1px solid var(--border-color);
-            margin-bottom: 30px;
-        }
-        .tab {
-            padding: 10px 20px;
-            font-weight: 600;
-            color: var(--primary-blue);
-            border-bottom: 3px solid var(--primary-blue);
-            cursor: pointer;
-        }
-        .tab.inactive {
-            color: var(--text-main);
-            border-bottom: 3px solid transparent;
-        }
+    /* Formulářové prvky */
+    #kandidatky-app-2026 .form-group {
+        margin-bottom: 20px;
+    }
+    #kandidatky-app-2026 .form-group label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+    }
+    #kandidatky-app-2026 select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        font-size: 1rem;
+        background-color: white;
+        color: #6b7280;
+        appearance: none;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230033cc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 1em;
+        box-sizing: border-box;
+    }
+    #kandidatky-app-2026 select:focus {
+        outline: none;
+        border-color: #0033cc;
+        color: #111827;
+    }
+    #kandidatky-app-2026 select:disabled {
+        background-color: #f3f4f6;
+        cursor: not-allowed;
+    }
 
-        /* Formulářové prvky */
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
-        }
-        select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            font-size: 1rem;
-            background-color: white;
-            color: var(--text-muted);
-            appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230033cc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-            background-repeat: no-repeat;
-            background-position: right 1rem center;
-            background-size: 1em;
-        }
-        select:focus {
-            outline: none;
-            border-color: var(--primary-blue);
-            color: var(--text-main);
-        }
-        select:disabled {
-            background-color: var(--bg-light);
-            cursor: not-allowed;
-        }
+    /* Akordeon pro strany */
+    #kandidatky-app-2026 .party-accordion {
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        margin-bottom: 15px;
+        overflow: hidden;
+    }
+    #kandidatky-app-2026 .party-header {
+        padding: 15px 20px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: white;
+        transition: background 0.2s;
+    }
+    #kandidatky-app-2026 .party-header:hover {
+        background: #f9fafb;
+    }
+    #kandidatky-app-2026 .party-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+    }
+    #kandidatky-app-2026 .party-subtitle {
+        font-size: 0.85rem;
+        color: #6b7280;
+        margin-top: 4px;
+    }
+    #kandidatky-app-2026 .chevron {
+        transition: transform 0.3s;
+        color: #0033cc;
+    }
+    #kandidatky-app-2026 .party-accordion.active .chevron {
+        transform: rotate(180deg);
+    }
+    #kandidatky-app-2026 .party-content {
+        display: none;
+        padding: 0 20px;
+        border-top: 1px solid #d1d5db;
+    }
+    #kandidatky-app-2026 .party-accordion.active .party-content {
+        display: block;
+    }
 
-        /* Akordeon pro strany */
-        .party-accordion {
-            border: 1px solid var(--border-color);
-            border-radius: 4px;
-            margin-bottom: 15px;
-            overflow: hidden;
-        }
-        .party-header {
-            padding: 15px 20px;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: white;
-            transition: background 0.2s;
-        }
-        .party-header:hover {
-            background: #f9fafb;
-        }
-        .party-title {
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-        .party-subtitle {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-top: 4px;
-        }
-        .chevron {
-            transition: transform 0.3s;
-            color: var(--primary-blue);
-        }
-        .party-accordion.active .chevron {
-            transform: rotate(180deg);
-        }
-        .party-content {
-            display: none;
-            padding: 0 20px;
-            border-top: 1px solid var(--border-color);
-        }
-        .party-accordion.active .party-content {
-            display: block;
-        }
+    /* Seznam kandidátů - společné */
+    #kandidatky-app-2026 .candidate-item {
+        padding: 15px 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+    #kandidatky-app-2026 .candidate-item:last-child {
+        border-bottom: none;
+    }
+    #kandidatky-app-2026 .candidate-name {
+        font-weight: 600;
+        font-size: 1.05rem;
+        margin-bottom: 5px;
+    }
+    #kandidatky-app-2026 .candidate-details {
+        font-size: 0.9rem;
+        color: #6b7280;
+    }
+    #kandidatky-app-2026 .candidate-details b {
+        color: #111827;
+    }
 
-        /* Seznam kandidátů */
-        .candidate-item {
-            padding: 15px 0;
-            border-bottom: 1px solid #f3f4f6;
-        }
-        .candidate-item:last-child {
-            border-bottom: none;
-        }
-        .candidate-name {
-            font-weight: 600;
-            font-size: 1.05rem;
-            margin-bottom: 5px;
-        }
-        .candidate-details {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-        }
-        .candidate-details b {
-            color: var(--text-main);
-        }
+    /* Nové styly pro vyhledávání */
+    #kandidatky-app-2026 #search-view {
+        display: none;
+    }
+    #kandidatky-app-2026 .search-input-container {
+        position: relative;
+        margin-bottom: 20px;
+    }
+    #kandidatky-app-2026 .search-input-container input {
+        width: 100%;
+        padding: 12px 40px 12px 15px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        font-size: 1rem;
+        box-sizing: border-box;
+    }
+    #kandidatky-app-2026 .search-input-container input:focus {
+        outline: none;
+        border-color: #0033cc;
+    }
+    #kandidatky-app-2026 .search-icon {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+    }
+    #kandidatky-app-2026 .search-result-item {
+        padding: 15px 0;
+        border-bottom: 1px solid #d1d5db;
+    }
+    #kandidatky-app-2026 .search-result-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 5px;
+    }
+    #kandidatky-app-2026 .search-result-party-badge {
+        background-color: #6b7280;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        font-weight: bold;
+    }
+    #kandidatky-app-2026 .search-result-location {
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-top: 8px;
+    }
+</style>
 
-        #loading {
-            display: none;
-            color: var(--primary-blue);
-            font-weight: bold;
-            margin: 20px 0;
-        }
-    </style>
-</head>
-<body>
-
-    <h1>Kandidátky pro volby do zastupitelstev obcí 2026</h1>
+<div id="kandidatky-app-2026">
+    <h2>Kandidátky pro volby do zastupitelstev obcí 2026</h2>
 
     <div class="tabs">
-        <div class="tab">Kandidáti v obcích</div>
-        <div class="tab inactive">Hledat kandidáta</div>
+        <div class="tab" id="tab-obce">Kandidáti v obcích</div>
+        <div class="tab inactive" id="tab-hledat">Hledat kandidáta</div>
     </div>
 
-    <div class="form-group">
-        <label for="kraj">Kraj</label>
-        <select id="kraj">
-            <option value="">Vyberte kraj</option>
-        </select>
+    <!-- Pohled pro obce -->
+    <div id="obce-view">
+        <div class="form-group">
+            <label for="kraj">Kraj</label>
+            <select id="kraj">
+                <option value="">Vyberte kraj</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="okres">Okres</label>
+            <select id="okres" disabled>
+                <option value="">Vyberte okres</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="obec">Obec nebo městská část</label>
+            <select id="obec" disabled>
+                <option value="">Vyberte obec</option>
+            </select>
+        </div>
+        <div id="loading-obce" style="display:none; color:#0033cc; font-weight:bold; margin:20px 0;">Načítám data...</div>
+        <div id="vysledky-obce"></div>
     </div>
 
-    <div class="form-group">
-        <label for="okres">Okres</label>
-        <select id="okres" disabled>
-            <option value="">Vyberte okres</option>
-        </select>
+    <!-- Pohled pro vyhledávání -->
+    <div id="search-view">
+        <div class="search-input-container">
+            <input type="text" id="search-input" placeholder="Vyhledat jméno kandidáta" disabled>
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </div>
+        <div id="loading-search" style="display:none; color:#0033cc; font-weight:bold; margin:20px 0;">Stahuji databázi kandidátů...</div>
+        <div id="vysledky-search">Začněte psát pro vyhledávání.</div>
     </div>
+</div>
 
-    <div class="form-group">
-        <label for="obec">Obec nebo městská část</label>
-        <select id="obec" disabled>
-            <option value="">Vyberte obec</option>
-        </select>
-    </div>
-
-    <div id="loading">Načítám data...</div>
-    <div id="vysledky"></div>
-
-    <script>
+<script>
+    (function() {
         let lokalityData = {};
+        let searchIndex = [];
+        let searchIndexLoaded = false;
 
         const selKraj = document.getElementById('kraj');
         const selOkres = document.getElementById('okres');
         const selObec = document.getElementById('obec');
-        const vysledkyDiv = document.getElementById('vysledky');
-        const loadingDiv = document.getElementById('loading');
+        const vysledkyObceDiv = document.getElementById('vysledky-obce');
+        const loadingObceDiv = document.getElementById('loading-obce');
 
-        // 1. Načtení navigačního stromu při startu
-        fetch('lokality.json')
+        const tabObce = document.getElementById('tab-obce');
+        const tabHledat = document.getElementById('tab-hledat');
+        const obceView = document.getElementById('obce-view');
+        const searchView = document.getElementById('search-view');
+        
+        const searchInput = document.getElementById('search-input');
+        const vysledkySearchDiv = document.getElementById('vysledky-search');
+        const loadingSearchDiv = document.getElementById('loading-search');
+
+        // Přepínání záložek
+        tabObce.addEventListener('click', () => {
+            tabObce.classList.remove('inactive');
+            tabHledat.classList.add('inactive');
+            obceView.style.display = 'block';
+            searchView.style.display = 'none';
+        });
+
+        tabHledat.addEventListener('click', () => {
+            tabHledat.classList.remove('inactive');
+            tabObce.classList.add('inactive');
+            obceView.style.display = 'none';
+            searchView.style.display = 'block';
+            
+            if (!searchIndexLoaded) {
+                loadSearchIndex();
+            }
+        });
+
+        // 1. Načtení navigačního stromu (RAW z GitHubu)
+        fetch('https://raw.githubusercontent.com/bi-cnc/kandidatky-2026/main/lokality.json')
             .then(res => res.json())
             .then(data => {
                 lokalityData = data;
-                // Naplnění výběru krajů
                 Object.keys(data).sort().forEach(kraj => {
                     let opt = document.createElement('option');
                     opt.value = kraj;
@@ -213,14 +285,11 @@
         // 2. Obsluha výběru kraje
         selKraj.addEventListener('change', function() {
             const kraj = this.value;
-            
-            // Reset nižších úrovní
             selOkres.innerHTML = '<option value="">Vyberte okres</option>';
             selObec.innerHTML = '<option value="">Vyberte obec</option>';
             selOkres.disabled = true;
             selObec.disabled = true;
-            vysledkyDiv.innerHTML = '';
-
+            vysledkyObceDiv.innerHTML = '';
             if (kraj && lokalityData[kraj]) {
                 selOkres.disabled = false;
                 Object.keys(lokalityData[kraj]).sort().forEach(okres => {
@@ -236,11 +305,9 @@
         selOkres.addEventListener('change', function() {
             const kraj = selKraj.value;
             const okres = this.value;
-
             selObec.innerHTML = '<option value="">Vyberte obec</option>';
             selObec.disabled = true;
-            vysledkyDiv.innerHTML = '';
-
+            vysledkyObceDiv.innerHTML = '';
             if (kraj && okres && lokalityData[kraj][okres]) {
                 selObec.disabled = false;
                 lokalityData[kraj][okres].forEach(obec => {
@@ -252,41 +319,35 @@
             }
         });
 
-        // 4. Obsluha výběru obce (Stažení JSONu pro konkrétní obec)
+        // 4. Obsluha výběru obce a načtení dat
         selObec.addEventListener('change', function() {
             const kodObce = this.value;
-            vysledkyDiv.innerHTML = '';
-
+            vysledkyObceDiv.innerHTML = '';
             if (kodObce) {
-                loadingDiv.style.display = 'block';
-
-                fetch(`data_obci/${kodObce}.json`)
+                loadingObceDiv.style.display = 'block';
+                fetch(`https://raw.githubusercontent.com/bi-cnc/kandidatky-2026/main/data_obci/${kodObce}.json`)
                     .then(res => {
                         if (!res.ok) throw new Error("Data pro tuto obec se nepodařilo načíst.");
                         return res.json();
                     })
-                    .then(data => vykresliVysledky(data))
+                    .then(data => vykresliVysledkyObce(data))
                     .catch(err => {
-                        vysledkyDiv.innerHTML = `<p style="color:red">${err.message}</p>`;
+                        vysledkyObceDiv.innerHTML = `<p style="color:red">${err.message}</p>`;
                     })
                     .finally(() => {
-                        loadingDiv.style.display = 'none';
+                        loadingObceDiv.style.display = 'none';
                     });
             }
         });
 
-        // 5. Vykreslení seznamu stran a kandidátů
-        function vykresliVysledky(data) {
+        // Vykreslení výsledků pro danou obec
+        function vykresliVysledkyObce(data) {
             let html = '';
-
             if (data.strany.length === 0) {
-                html = '<p>Pro tuto obec nejsou evidovány žádné kandidátní listiny.</p>';
-                vysledkyDiv.innerHTML = html;
+                vysledkyObceDiv.innerHTML = '<p>Pro tuto obec nejsou evidovány žádné kandidátní listiny.</p>';
                 return;
             }
-
             data.strany.forEach(strana => {
-                // Sestavení kandidátů
                 let kandidatiHtml = '';
                 strana.kandidati.forEach(k => {
                     kandidatiHtml += `
@@ -298,8 +359,6 @@
                         </div>
                     `;
                 });
-
-                // HTML pro jednu stranu (Akordeon)
                 html += `
                     <div class="party-accordion">
                         <div class="party-header" onclick="this.parentElement.classList.toggle('active')">
@@ -307,9 +366,7 @@
                                 <div class="party-title">${strana.zkratka}</div>
                                 <div class="party-subtitle">${strana.nazev}</div>
                             </div>
-                            <div class="chevron">
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                            </div>
+                            <div class="chevron"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg></div>
                         </div>
                         <div class="party-content">
                             ${kandidatiHtml || '<p style="padding: 15px 0;">Nejsou evidováni žádní kandidáti.</p>'}
@@ -317,9 +374,63 @@
                     </div>
                 `;
             });
-
-            vysledkyDiv.innerHTML = html;
+            vysledkyObceDiv.innerHTML = html;
         }
-    </script>
-</body>
-</html>
+
+        // --- ZÁLOŽKA: VYHLEDÁVÁNÍ KANDIDÁTŮ ---
+        function loadSearchIndex() {
+            loadingSearchDiv.style.display = 'block';
+            fetch('https://raw.githubusercontent.com/bi-cnc/kandidatky-2026/main/search_index.json')
+                .then(res => res.json())
+                .then(data => {
+                    searchIndex = data;
+                    searchIndexLoaded = true;
+                    searchInput.disabled = false;
+                    vysledkySearchDiv.innerHTML = 'Index načten. Začněte psát (alespoň 3 znaky).';
+                })
+                .catch(err => {
+                    vysledkySearchDiv.innerHTML = `<p style="color:red">Chyba při načítání databáze kandidátů.</p>`;
+                })
+                .finally(() => {
+                    loadingSearchDiv.style.display = 'none';
+                });
+        }
+
+        searchInput.addEventListener('input', function() {
+            const query = this.value.toLowerCase().trim();
+            if (query.length < 3) {
+                vysledkySearchDiv.innerHTML = 'Zadejte alespoň 3 znaky pro vyhledávání.';
+                return;
+            }
+
+            // Filtrace v poli searchIndex
+            const results = searchIndex.filter(k => k.j_low.includes(query)).slice(0, 50);
+
+            if (results.length === 0) {
+                vysledkySearchDiv.innerHTML = 'Nenalezen žádný kandidát odpovídající zadání.';
+                return;
+            }
+
+            let html = '';
+            results.forEach(k => {
+                let pol_prisl_text = k.pp !== k.s ? `, navrhující subjekt: <b>${k.ns}</b>` : '';
+                
+                html += `
+                    <div class="search-result-item">
+                        <div class="search-result-header">
+                            <span class="candidate-name">${k.p}. ${k.j}</span>
+                            <span class="search-result-party-badge">${k.s}</span>
+                        </div>
+                        <div class="candidate-details">
+                            ${k.v} let, ${k.pov}, ${k.b}, politická příslušnost: <b>${k.pp}</b>${pol_prisl_text}
+                        </div>
+                        <div class="search-result-location">
+                            ${k.o}, okr. ${k.ok}
+                        </div>
+                    </div>
+                `;
+            });
+            vysledkySearchDiv.innerHTML = html;
+        });
+    })();
+</script>
